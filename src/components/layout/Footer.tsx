@@ -9,10 +9,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Sección 1: Información de contacto */}
           <div>
-            <h3 className="text-lg font-serif font-semibold mb-4">Ana María García</h3>
-            <p className="text-sm mb-2">Profesora de Lengua y Literatura</p>
-            <p className="text-sm mb-2">I.E.S. Miguel de Cervantes</p>
-            <p className="text-sm mb-2">Madrid, España</p>
+            <h3 className="text-lg font-serif font-semibold mb-4">Paola Hernandez Tarrega</h3>
+            <p className="text-sm mb-2">Profesora de Secundaria</p>
+            <p className="text-sm mb-2">Centro Educativo Salesianos San Juan Bosco</p>
+            <p className="text-sm mb-2">Valencia, España</p>
           </div>
           
           {/* Sección 2: Enlaces rápidos */}
@@ -83,7 +83,7 @@ export function Footer() {
         
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            &copy; {currentYear} Ana María García. Todos los derechos reservados.
+            &copy; {currentYear} Paola Hernandez Tarrega. Todos los derechos reservados.
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
             Desarrollado con Next.js y TailwindCSS
