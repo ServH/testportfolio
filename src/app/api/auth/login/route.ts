@@ -8,6 +8,8 @@ export async function POST(request: NextRequest) {
     const session = await getIronSession(cookies(), sessionOptions);
     const { username, password } = await request.json();
 
+    console.log('Intentando login con:', username); // Log para debug
+
     // Validación básica de entrada
     if (!username || !password) {
       return NextResponse.json(
@@ -18,6 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar credenciales
     const isValid = await verifyCredentials(username, password);
+    console.log('Credenciales válidas:', isValid); // Log para debug
     
     if (!isValid) {
       return NextResponse.json(
@@ -34,6 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Guardar sesión
     await session.save();
+    console.log('Sesión guardada para:', username); // Log para debug
 
     return NextResponse.json({ 
       user: { isLoggedIn: true, username } 
