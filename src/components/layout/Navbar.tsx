@@ -49,7 +49,7 @@ export function Navbar() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-xl font-serif font-bold">Ana María García</span>
+            <span className="text-xl font-serif font-bold">Paola Hernandez Tarrega</span>
             <span className="hidden md:block ml-2 text-sm text-gray-500 dark:text-gray-400">
               Profesora de Secundaria
             </span>
