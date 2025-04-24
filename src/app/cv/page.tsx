@@ -21,9 +21,9 @@ export default function CVPage() {
       
       <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
         <CVHeader 
-          name="Ana María García"
+          name="Paola Hernandez Tarrega"
           title="Profesora de Secundaria"
-          specialization="Especialidad en Lengua y Literatura" 
+          specialization="Centro Educativo Salesianos San Juan Bosco" 
         />
         
         <div className="p-6 md:p-8 space-y-8">
