@@ -18,7 +18,7 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: 'Portfolio Profesional Docente',
+  title: 'Portfolio Profesional - Paola Hernandez Tarrega',
   description: 'Portfolio profesional para profesora de secundaria, mostrando experiencia, curriculum y recursos educativos',
 };
 
