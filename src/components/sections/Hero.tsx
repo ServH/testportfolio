@@ -20,11 +20,11 @@ export function Hero() {
           className="max-w-4xl"
         >
           <h1 className="text-4xl md:text-6xl font-serif font-bold text-white mb-6">
-            <span className="tdh-helper">Ana</span> María García
+            <span className="tdh-helper">Paola</span> Hernandez Tarrega
           </h1>
           
           <h2 className="text-2xl md:text-3xl text-white/90 mb-8">
-            <span className="tdh-helper">Profesora</span> de Lengua y Literatura en <span className="tdh-helper">Secundaria</span>
+            <span className="tdh-helper">Profesora</span> de Secundaria en <span className="tdh-helper">Valencia</span>
           </h2>
           
           <p className="text-xl text-white/80 mb-10 max-w-2xl">
