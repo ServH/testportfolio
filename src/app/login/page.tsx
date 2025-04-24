@@ -19,6 +19,8 @@ export default function LoginPage() {
       setIsLoading(true);
       setError('');
       
+      console.log('Enviando credenciales:', { username, password });
+      
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -27,8 +29,10 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password }),
       });
       
+      const data = await response.json();
+      console.log('Respuesta del servidor:', data);
+      
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.message || 'Error al iniciar sesión');
       }
       
@@ -40,6 +44,12 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+  
+  // Para facilitar el desarrollo, podemos precargar las credenciales
+  const fillCredentials = () => {
+    setUsername('admin');
+    setPassword('admin123');
   };
   
   return (
@@ -99,13 +109,21 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div>
+          <div className="flex flex-col gap-3">
             <button
               type="submit"
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50"
             >
               {isLoading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </button>
+            
+            <button
+              type="button"
+              onClick={fillCredentials}
+              className="text-primary-600 hover:text-primary-800 dark:text-primary-400 text-sm font-medium"
+            >
+              Autocompletar credenciales (sólo desarrollo)
             </button>
           </div>
           
@@ -118,13 +136,6 @@ export default function LoginPage() {
             </Link>
           </div>
         </form>
-        
-        <div className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          <p>
-            Usuario: admin<br />
-            Contraseña: admin123
-          </p>
-        </div>
       </div>
     </div>
   );
