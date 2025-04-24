@@ -50,7 +50,7 @@ export function CVHeader({ name, title, specialization }: CVHeaderProps) {
         
         <div className="flex items-center">
           <MapPinIcon className="h-5 w-5 text-white/70 mr-2" />
-          <span className="text-sm">Madrid, España</span>
+          <span className="text-sm">Valencia, España</span>
         </div>
       </div>
     </div>
