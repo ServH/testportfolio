@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 15, 23, 42;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* Mejoras de accesibilidad para TDH */
+.tdh-helper {
+  @apply font-bold;
+}
+
+/* Estilo para resaltar la primera letra de párrafos en contenido principal */
+.content-paragraph:first-letter {
+  @apply font-bold text-lg;
+}
+
+@layer components {
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-md transition-colors focus-ring;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 text-white hover:bg-secondary-700;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800;
+  }
+  
+  .section {
+    @apply py-16 md:py-24;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6;
+  }
+  
+  .section-title {
+    @apply text-3xl md:text-4xl font-serif font-bold mb-6 md:mb-10;
+  }
+  
+  .section-subtitle {
+    @apply text-xl md:text-2xl font-serif font-semibold mb-4 md:mb-6;
+  }
+}
