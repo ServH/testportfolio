@@ -29,8 +29,10 @@ export const sessionOptions: IronSessionOptions = {
 // Esta es la información del admin que está quemada en el código para simplificar
 // En un entorno real, esto debería estar en una base de datos y el password hasheado
 const ADMIN_USERNAME = 'admin';
-// Password hasheado para seguridad (este es el hash de 'admin123')
-const ADMIN_PASSWORD_HASH = '$2a$10$fmLuJJM2OSuXGX3.XSUCzO1d8YIpE3RBHdrZ9C9mX2jtUGXCZoYTO';
+
+// Para simplificar el proceso de desarrollo, permitiremos credenciales en texto plano
+// En un entorno de producción, esto NUNCA debe hacerse - siempre usar hashes
+const ADMIN_PASSWORD = 'admin123';
 
 /**
  * Verifica las credenciales del usuario
@@ -41,8 +43,8 @@ export async function verifyCredentials(username: string, password: string): Pro
     return false;
   }
   
-  // Compara el password proporcionado con el hash almacenado
-  return await compare(password, ADMIN_PASSWORD_HASH);
+  // Compara la contraseña directamente (solo para desarrollo)
+  return password === ADMIN_PASSWORD;
 }
 
 /**
