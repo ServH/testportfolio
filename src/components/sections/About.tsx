@@ -33,7 +33,7 @@ export function About() {
               
               <div className="space-y-4">
                 <p className="content-paragraph">
-                  Soy <span className="tdh-helper">profesora</span> de Lengua y Literatura en educación secundaria con más de <span className="tdh-helper">diez años</span> de experiencia docente. Mi formación en Filología Hispánica y un máster en Educación me han proporcionado las <span className="tdh-helper">herramientas</span> necesarias para crear un entorno de aprendizaje estimulante e inclusivo.
+                  Soy <span className="tdh-helper">profesora</span> de Secundaria en el Centro Educativo Salesianos San Juan Bosco con más de <span className="tdh-helper">diez años</span> de experiencia docente. Mi formación académica y experiencia me han proporcionado las <span className="tdh-helper">herramientas</span> necesarias para crear un entorno de aprendizaje estimulante e inclusivo.
                 </p>
                 
                 <p className="content-paragraph">
@@ -41,11 +41,11 @@ export function About() {
                 </p>
                 
                 <p className="content-paragraph">
-                  Además de mi labor docente, participo activamente en <span className="tdh-helper">proyectos</span> de innovación educativa y soy autora de varios <span className="tdh-helper">materiales</span> didácticos especializados en literatura juvenil y técnicas de expresión escrita.
+                  Además de mi labor docente, participo activamente en <span className="tdh-helper">proyectos</span> de innovación educativa y soy autora de varios <span className="tdh-helper">materiales</span> didácticos especializados para el desarrollo educativo de los estudiantes.
                 </p>
                 
                 <blockquote className="italic border-l-4 border-primary-500 pl-4 mt-6">
-                  "Mi objetivo es inspirar en mis alumnos no solo el amor por la lengua y la literatura, sino también las competencias necesarias para su desarrollo personal y profesional en un mundo en constante cambio."
+                  "Mi objetivo es inspirar en mis alumnos no solo el amor por el aprendizaje, sino también las competencias necesarias para su desarrollo personal y profesional en un mundo en constante cambio."
                 </blockquote>
               </div>
             </div>
