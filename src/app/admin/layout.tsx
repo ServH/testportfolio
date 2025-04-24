@@ -1,138 +1,224 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import useUser from '@/lib/useUser';
-import { User } from '@/lib/auth';
+import Image from 'next/image';
+import { HomeIcon, DocumentTextIcon, PhotoIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const router = useRouter();
   const pathname = usePathname();
-  const { user, isLoading } = useUser({
-    redirectTo: '/admin/login',
-    redirectIfFound: false,
-  });
-  
-  // No renderizar nada mientras carga para evitar parpadeo
-  if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Cargando...</div>;
-  }
-  
-  // Si estamos en la página de login, mostrar solo el contenido sin layout
-  if (pathname === '/admin/login') {
-    return <>{children}</>;
-  }
   
   // Verificar si el usuario está autenticado
-  if (!user?.isLoggedIn) {
-    return <div className="min-h-screen flex items-center justify-center">Redirigiendo...</div>;
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/user');
+        const data = await response.json();
+        
+        if (data.isLoggedIn) {
+          setIsAuthenticated(true);
+        } else {
+          // Redirigir al login si no está autenticado
+          router.push('/login');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        router.push('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
+  
+  // Manejar cierre de sesión
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout');
+      router.push('/login');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+  
+  // Mostrar un indicador de carga mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
+        <span className="ml-3">Cargando...</span>
+      </div>
+    );
+  }
+  
+  // Si no está autenticado, no mostrar nada (la redirección ya está en marcha)
+  if (!isAuthenticated) {
+    return null;
   }
   
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <AdminNavbar user={user} />
-      
-      <div className="container mx-auto px-4 py-8">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function AdminNavbar({ user }: { user: User }) {
-  const pathname = usePathname();
-  
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout');
-    window.location.href = '/admin/login';
-  };
-  
-  const navItems = [
-    { name: 'Dashboard', href: '/admin' },
-    { name: 'Curriculum', href: '/admin/cv' },
-    { name: 'Recursos', href: '/admin/recursos' },
-  ];
-  
-  return (
-    <nav className="bg-white dark:bg-gray-800 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/admin" className="text-lg font-bold text-primary-600">
-                Admin Panel
-              </Link>
-            </div>
-            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                    pathname === item.href
-                      ? 'border-primary-500 text-gray-900 dark:text-white'
-                      : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="ml-3 relative">
-              <div className="flex items-center">
-                <span className="text-sm text-gray-500 dark:text-gray-300 mr-4">
-                  {user.username}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="bg-white dark:bg-gray-800 py-1 px-3 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
-                >
-                  Cerrar sesión
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="-mr-2 flex items-center sm:hidden">
-            {/* Botón de menú móvil */}
-            <button className="bg-white dark:bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-200 hover:text-gray-500 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
-              <span className="sr-only">Abrir menú</span>
-              <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    <div className="h-screen flex overflow-hidden bg-gray-100 dark:bg-gray-800">
+      {/* Sidebar para móvil */}
+      <div className={`md:hidden fixed inset-0 flex z-40 transition-opacity ease-linear duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ease-linear duration-300 ${isMenuOpen ? 'opacity-100' : 'opacity-0'}`}></div>
+        
+        <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-900 transition ease-in-out duration-300 transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+          <div className="absolute top-0 right-0 -mr-12 pt-2">
+            <button
+              type="button"
+              className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:focus:ring-gray-500"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span className="sr-only">Cerrar sidebar</span>
+              <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
+          
+          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
+            <div className="flex-shrink-0 flex items-center px-4">
+              <span className="text-xl font-bold text-gray-900 dark:text-white">Panel de Admin</span>
+            </div>
+            <nav className="mt-5 px-2 space-y-1">
+              <Link 
+                href="/admin" 
+                className={`${
+                  pathname === '/admin' 
+                    ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+              >
+                <HomeIcon className="mr-4 h-6 w-6" />
+                Dashboard
+              </Link>
+              
+              <Link 
+                href="/admin/cv" 
+                className={`${
+                  pathname === '/admin/cv' 
+                    ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+              >
+                <DocumentTextIcon className="mr-4 h-6 w-6" />
+                Curriculum
+              </Link>
+              
+              <Link 
+                href="/admin/recursos" 
+                className={`${
+                  pathname === '/admin/recursos' || pathname.startsWith('/admin/recursos/') 
+                    ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
+              >
+                <PhotoIcon className="mr-4 h-6 w-6" />
+                Recursos
+              </Link>
+              
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white group flex items-center px-2 py-2 text-base font-medium rounded-md"
+              >
+                <ArrowRightOnRectangleIcon className="mr-4 h-6 w-6" />
+                Cerrar Sesión
+              </button>
+            </nav>
+          </div>
+        </div>
+        
+        <div className="flex-shrink-0 w-14"></div>
+      </div>
+      
+      {/* Sidebar para desktop */}
+      <div className="hidden md:flex md:flex-shrink-0">
+        <div className="flex flex-col w-64">
+          <div className="flex flex-col h-0 flex-1 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4">
+                <span className="text-xl font-bold text-gray-900 dark:text-white">Panel de Admin</span>
+              </div>
+              <nav className="mt-5 flex-1 px-2 bg-white dark:bg-gray-900 space-y-1">
+                <Link 
+                  href="/admin" 
+                  className={`${
+                    pathname === '/admin' 
+                      ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <HomeIcon className="mr-3 h-6 w-6" />
+                  Dashboard
+                </Link>
+                
+                <Link 
+                  href="/admin/cv" 
+                  className={`${
+                    pathname === '/admin/cv' 
+                      ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <DocumentTextIcon className="mr-3 h-6 w-6" />
+                  Curriculum
+                </Link>
+                
+                <Link 
+                  href="/admin/recursos" 
+                  className={`${
+                    pathname === '/admin/recursos' || pathname.startsWith('/admin/recursos/') 
+                      ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400' 
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white'
+                  } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
+                >
+                  <PhotoIcon className="mr-3 h-6 w-6" />
+                  Recursos
+                </Link>
+                
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                >
+                  <ArrowRightOnRectangleIcon className="mr-3 h-6 w-6" />
+                  Cerrar Sesión
+                </button>
+              </nav>
+            </div>
+          </div>
         </div>
       </div>
       
-      {/* Menú móvil (simplificado) */}
-      <div className="sm:hidden hidden">
-        <div className="pt-2 pb-3 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
-                pathname === item.href
-                  ? 'border-primary-500 text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/20'
-                  : 'border-transparent text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+      <div className="flex flex-col w-0 flex-1 overflow-hidden">
+        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3">
           <button
-            onClick={handleLogout}
-            className="w-full text-left block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+            type="button"
+            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            onClick={() => setIsMenuOpen(true)}
           >
-            Cerrar sesión
+            <span className="sr-only">Abrir sidebar</span>
+            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
         </div>
+        
+        <main className="flex-1 relative overflow-y-auto focus:outline-none bg-gray-100 dark:bg-gray-800">
+          {children}
+        </main>
       </div>
-    </nav>
+    </div>
   );
 }
