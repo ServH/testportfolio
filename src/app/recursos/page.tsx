@@ -78,7 +78,7 @@ export default function ResourcesPage() {
   const resources = getResourcesData();
   
   return (
-    <div className="container-custom my-8">
+    <div className="container-custom pt-24 my-8"> {/* Añadido pt-24 para evitar solapamiento */}
       <h1 className="text-3xl md:text-4xl font-serif font-bold mb-8">Recursos Educativos</h1>
       
       <p className="content-paragraph text-lg mb-6">
