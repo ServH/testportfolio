@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function CVPage() {
   return (
-    <div className="container-custom pt-24 my-8"> {/* Añadido pt-24 para dar espacio en la parte superior */}
+    <div className="container-custom my-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl md:text-4xl font-serif font-bold">Curriculum Vitae</h1>
         <DownloadButton />
