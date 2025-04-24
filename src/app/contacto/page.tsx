@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="container-custom my-8">
+    <div className="container-custom pt-24 my-8"> {/* Añadido pt-24 para evitar solapamiento */}
       <h1 className="text-3xl md:text-4xl font-serif font-bold mb-8">Contacto</h1>
       
       <div className="grid md:grid-cols-2 gap-10">
