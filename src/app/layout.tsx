@@ -32,7 +32,8 @@ export default function RootLayout({
       <body className={`${inter.variable} ${merriweather.variable} font-sans antialiased`}>
         <div className="flex flex-col min-h-screen">
           <Navbar />
-          <main className="flex-grow">{children}</main>
+          {/* Añadido pt-24 al contenido principal para evitar solapamiento con la barra de navegación fija */}
+          <main className="flex-grow pt-24">{children}</main>
           <Footer />
         </div>
       </body>
