@@ -1,16 +1,30 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { CVData } from '@/lib/data';
+
+// Importar los componentes de formulario
+import PersonalInfoForm from './components/PersonalInfoForm';
+import ExperienceForm from './components/ExperienceForm';
+import EducationForm from './components/EducationForm';
+import SkillsForm from './components/SkillsForm';
+import CertificationsForm from './components/CertificationsForm';
 
 export default function CVEditor() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('personal');
   
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CVData>();
+  const { register, handleSubmit, reset, control, formState: { errors }, getValues, setValue } = useForm<CVData>();
+  
+  // Configurar field arrays para secciones con múltiples elementos
+  const experienceArray = useFieldArray({ control, name: 'experience' });
+  const educationArray = useFieldArray({ control, name: 'education' });
+  const skillGroupsArray = useFieldArray({ control, name: 'skillGroups' });
+  const certificationsArray = useFieldArray({ control, name: 'certifications' });
   
   // Cargar datos del CV al inicio
   useEffect(() => {
@@ -79,7 +93,7 @@ export default function CVEditor() {
   if (isLoading) {
     return (
       <div className="py-10">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-4xl">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Editar Curriculum</h1>
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary-600"></div>
@@ -92,7 +106,7 @@ export default function CVEditor() {
   
   return (
     <div className="py-10">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Editar Curriculum</h1>
           
@@ -120,158 +134,103 @@ export default function CVEditor() {
           </div>
         )}
         
+        {/* Pestañas para navegar entre secciones */}
+        <div className="mb-6 border-b border-gray-200 dark:border-gray-700">
+          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab('personal')}
+              className={`${
+                activeTab === 'personal'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Información Personal
+            </button>
+            <button
+              onClick={() => setActiveTab('experience')}
+              className={`${
+                activeTab === 'experience'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Experiencia
+            </button>
+            <button
+              onClick={() => setActiveTab('education')}
+              className={`${
+                activeTab === 'education'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Formación
+            </button>
+            <button
+              onClick={() => setActiveTab('skills')}
+              className={`${
+                activeTab === 'skills'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Habilidades
+            </button>
+            <button
+              onClick={() => setActiveTab('certifications')}
+              className={`${
+                activeTab === 'certifications'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+            >
+              Certificaciones
+            </button>
+          </nav>
+        </div>
+        
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* Información Personal */}
-          <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                Información Personal
-              </h3>
-            </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label htmlFor="personal.name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Nombre
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="personal.name"
-                      {...register('personal.name', { required: 'El nombre es obligatorio' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.name && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.name.message}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-3">
-                  <label htmlFor="personal.title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Título
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="personal.title"
-                      {...register('personal.title', { required: 'El título es obligatorio' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.title && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.title.message}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-6">
-                  <label htmlFor="personal.specialization" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Centro Educativo
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="personal.specialization"
-                      {...register('personal.specialization', { required: 'El centro educativo es obligatorio' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.specialization && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.specialization.message}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-3">
-                  <label htmlFor="personal.email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="email"
-                      id="personal.email"
-                      {...register('personal.email', { 
-                        required: 'El email es obligatorio',
-                        pattern: {
-                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                          message: 'Dirección de email inválida'
-                        }
-                      })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.email && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.email.message}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-3">
-                  <label htmlFor="personal.phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Teléfono
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="personal.phone"
-                      {...register('personal.phone', { required: 'El teléfono es obligatorio' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.phone && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.phone.message}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="sm:col-span-6">
-                  <label htmlFor="personal.location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Ubicación
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      id="personal.location"
-                      {...register('personal.location', { required: 'La ubicación es obligatoria' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.personal?.location && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.personal.location.message}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Mostrar el componente correspondiente según la pestaña activa */}
+          {activeTab === 'personal' && (
+            <PersonalInfoForm register={register} errors={errors} />
+          )}
           
-          {/* Sobre Mí */}
-          <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white">
-                Sobre Mí
-              </h3>
-            </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
-              <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-                <div className="sm:col-span-6">
-                  <label htmlFor="about" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Descripción
-                  </label>
-                  <div className="mt-1">
-                    <textarea
-                      id="about"
-                      rows={6}
-                      {...register('about', { required: 'La descripción es obligatoria' })}
-                      className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md"
-                    />
-                    {errors.about && (
-                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.about.message}</p>
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Escribe una breve descripción sobre ti y tu experiencia profesional.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          {activeTab === 'experience' && (
+            <ExperienceForm 
+              register={register} 
+              errors={errors} 
+              experienceArray={experienceArray}
+              getValues={getValues}
+              setValue={setValue}
+            />
+          )}
+          
+          {activeTab === 'education' && (
+            <EducationForm 
+              register={register} 
+              errors={errors} 
+              educationArray={educationArray}
+            />
+          )}
+          
+          {activeTab === 'skills' && (
+            <SkillsForm 
+              register={register} 
+              errors={errors} 
+              skillGroupsArray={skillGroupsArray}
+              getValues={getValues}
+              setValue={setValue}
+            />
+          )}
+          
+          {activeTab === 'certifications' && (
+            <CertificationsForm 
+              register={register} 
+              errors={errors} 
+              certificationsArray={certificationsArray}
+            />
+          )}
           
           {/* Botón de guardar al final */}
           <div className="flex justify-end">
