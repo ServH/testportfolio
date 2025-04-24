@@ -37,9 +37,9 @@ export function ContactInfo() {
         <div className="ml-4">
           <h3 className="text-lg font-medium">Ubicación</h3>
           <address className="text-gray-600 dark:text-gray-300 not-italic">
-            I.E.S. Miguel de Cervantes<br />
-            Calle del Instituto, 28<br />
-            28000, Madrid
+            Centro Educativo Salesianos San Juan Bosco<br />
+            Calle del Centro, 28<br />
+            46000, Valencia
           </address>
         </div>
       </div>
